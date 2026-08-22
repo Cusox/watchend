@@ -1,0 +1,11 @@
+{{define "repository-edit"}}{{range .Repositories}}
+<article id="repository-{{.ID}}" class="repository-editor">
+    <form method="post" action="/repositories/{{.ID}}" hx-post="/repositories/{{.ID}}" hx-target="#repository-{{.ID}}" hx-swap="outerHTML">
+        <input type="hidden" name="csrf_token" value="{{$.CSRFToken}}">
+        <label>Note<textarea name="note" maxlength="4000" rows="4">{{.Note}}</textarea></label>
+        <label>Categories<input name="categories" value="{{range $i, $v := .Categories}}{{if $i}}, {{end}}{{$v}}{{end}}" maxlength="1000"></label>
+        <label>Tags<input name="tags" value="{{range $i, $v := .Tags}}{{if $i}}, {{end}}{{$v}}{{end}}" maxlength="1000"></label>
+        <div class="editor-actions"><button type="submit">Save</button><button type="button" class="button-secondary" hx-get="/repositories/{{.ID}}" hx-target="#repository-{{.ID}}" hx-swap="outerHTML">Cancel</button></div>
+    </form>
+</article>
+{{end}}{{end}}

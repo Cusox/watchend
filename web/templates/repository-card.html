@@ -1,0 +1,20 @@
+{{define "repository-card"}}{{range .Repositories}}
+<article id="repository-{{.ID}}">
+    <div class="repository-content">
+        <h2><a href="{{.HTMLURL}}" target="_blank" rel="noopener noreferrer">{{.FullName}}</a></h2>
+        <p>{{.Description}}</p>
+        {{with .Note}}<p class="repository-note">{{.}}</p>{{end}}
+    </div>
+    <div class="repository-footer">
+        {{with .Categories}}<div class="repository-label-row"><span class="label-heading">Categories</span><div class="label-values">{{range .}}<span class="label">{{.}}</span>{{end}}</div></div>{{end}}
+        {{with .Tags}}<div class="repository-label-row"><span class="label-heading">Tags</span><div class="label-values">{{range .}}<span class="label">#{{.}}</span>{{end}}</div></div>{{end}}
+        <div class="repository-meta">
+            {{with .Language}}<span class="repository-language"><span class="meta-icon" aria-hidden="true">●</span>{{.}}</span>{{end}}
+            <span><span class="meta-icon" aria-hidden="true">☆</span>{{stars .Stars}}</span>
+            {{with .License}}<span><span class="meta-icon" aria-hidden="true">⚖</span>{{.}}</span>{{end}}
+            {{if .Archived}}<span>archived</span>{{end}}
+        </div>
+        <div class="repository-updated"><span>Updated {{.UpdatedAt.Format "2006-01-02"}}</span><button class="edit-repository" hx-get="/repositories/{{.ID}}/edit" hx-target="#repository-{{.ID}}" hx-swap="outerHTML">Edit</button></div>
+    </div>
+</article>
+{{end}}{{end}}

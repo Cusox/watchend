@@ -1,0 +1,42 @@
+{{define "repositories"}}
+    {{template "head" .}}
+    <div class="heading">
+        <div class="heading-copy">
+            <h1>Repositories</h1>
+            <p class="subtitle">Your starred projects, in one quiet place.</p>
+        </div>
+        <div class="repository-actions">
+            <form method="get" action="/repositories">
+                <label class="sort-label">Sort by
+                    <select class="sort-select" name="sort">
+                        <option value="stars"{{if eq .Query "stars"}} selected{{end}}>Stars</option>
+                        <option value="updated"{{if eq .Query "updated"}} selected{{end}}>Updated</option>
+                        <option value="name"{{if eq .Query "name"}} selected{{end}}>Name</option>
+                        <option value="starred"{{if eq .Query "starred"}} selected{{end}}>Starred time</option>
+                    </select>
+                </label>
+                <input type="hidden" name="direction" value="{{.Direction}}">
+                <input type="hidden" name="q" value="{{.Search}}">
+                <button class="direction-toggle" type="button" aria-label="Toggle sort direction" title="Toggle sort direction">{{if eq .Direction "desc"}}↓{{else}}↑{{end}}</button>
+            </form>
+            <form method="post" action="/repositories/sync" hx-post="/repositories/sync" hx-target="#sync-status" hx-swap="innerHTML" hx-indicator="#sync-progress">
+            <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                <button>Sync now</button>
+            </form>
+        </div>
+    </div>
+    <div class="repository-search-row">
+        <form class="repository-search" method="get" action="/repositories" hx-get="/repositories/cards" hx-target="#repository-cards" hx-trigger="submit, keyup changed delay:300ms from:input" hx-swap="innerHTML">
+            <input type="search" name="q" value="{{.Search}}" placeholder="Search repositories" aria-label="Search repositories">
+            <input type="hidden" name="sort" value="{{.Query}}">
+            <input type="hidden" name="direction" value="{{.Direction}}">
+        </form>
+        <a class="random-repository" href="/repositories/random?q={{.Search}}" target="_blank" rel="noopener noreferrer" aria-label="Open random repository" title="Open random repository">⚄</a>
+    </div>
+    <div id="sync-status"></div>
+    <div id="repository-cards" class="cards" hx-trigger="repositories-updated from:body" hx-get="/repositories/cards?q={{.Search}}&sort={{.Query}}&direction={{.Direction}}" hx-swap="innerHTML">
+        {{template "repository-cards" .}}
+        {{if not .Repositories}}<p>No repositories yet.</p>{{end}}
+    </div>
+    {{template "foot"}}
+{{end}}

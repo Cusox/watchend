@@ -1,0 +1,27 @@
+{{define "head"}}
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>{{.Title}} · watchend</title>
+        <link rel="stylesheet" href="/static/app.css">
+        <script src="/static/htmx.min.js" defer></script>
+        <script src="/static/app.js" defer></script>
+    </head>
+    <body>
+        <header>
+            <a class="brand" href="/">watchend<span>.</span></a>
+            <nav>
+                <a href="/">Repositories</a>
+            </nav>
+            <form method="post" action="/logout">
+                <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+                <button>Log out</button>
+            </form>
+        </header>
+        <div id="sync-progress" class="sync-progress" aria-hidden="true">
+            <div class="sync-progress-bar"></div>
+        </div>
+        <main>
+{{end}}
