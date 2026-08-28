@@ -417,16 +417,21 @@ header button:hover {
 }
 
 .meta-icon {
-    display: inline-grid;
-    width: 1.15em;
-    place-items: center;
-    color: var(--ink);
-    font-size: 1.15em;
-    line-height: 1;
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    flex: 0 0 1em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    vertical-align: -.15em;
 }
 
-.repository-language .meta-icon {
-    font-size: .82em;
+.repository-language .meta-icon,
+.repository-meta span:nth-child(2) .meta-icon,
+.repository-meta span:nth-child(3) .meta-icon {
+    fill: currentColor;
+    stroke: none;
 }
 
 .repository-updated {

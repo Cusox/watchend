@@ -5,7 +5,7 @@
 ## 功能
 
 - 单用户用户名/密码登陆支持
-- 同步管理用户的 Star 仓库，可按多种方式排序，支持升序/降序切换和分页加载等
+- 同步管理用户的 Star 仓库，可按多种方式排序，支持升序/降序切换和分页加载；应用启动后会按配置间隔自动同步
 - 支持前往随机星标仓库
 
 ## 配置
@@ -21,7 +21,7 @@
 | `WATCHEND_SESSION_TTL` | 否 | `720h` | Session 有效期 |
 | `WATCHEND_SECURE_COOKIES` | 否 | `true` | HTTPS 环境保持 `true`；本地 HTTP 开发设置为 `false` |
 | `WATCHEND_GITHUB_TOKEN` | 是 | - | GitHub Personal Access Token |
-| `WATCHEND_SYNC_INTERVAL` | 否 | `6h` | 同步间隔配置 |
+| `WATCHEND_SYNC_INTERVAL` | 否 | `6h` | 后台自动同步间隔；应用启动后首次等待该间隔再同步 |
 
 `WATCHEND_GITHUB_TOKEN` 用于调用 GitHub API，Token 应只授予同步所需的最小权限。
 

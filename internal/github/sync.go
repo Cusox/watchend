@@ -58,11 +58,10 @@ func (s *Syncer) Sync(ctx context.Context) error {
 	}
 	s.status = SyncStatus{Running: true}
 	s.mu.Unlock()
-	s.run(ctx)
-	return nil
+	return s.run(ctx)
 }
 
-func (s *Syncer) run(parent context.Context) {
+func (s *Syncer) run(parent context.Context) error {
 	ctx, cancel := context.WithTimeout(parent, 10*time.Minute)
 	defer cancel()
 	var processed int
@@ -85,11 +84,8 @@ func (s *Syncer) run(parent context.Context) {
 		}
 		return nil
 	})
-	if err != nil {
-		s.finish(err)
-		return
-	}
-	s.finish(nil)
+	s.finish(err)
+	return err
 }
 
 func (s *Syncer) finish(err error) {

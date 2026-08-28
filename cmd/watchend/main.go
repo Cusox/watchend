@@ -57,6 +57,7 @@ func run() error {
 		return err
 	}
 
+	syncer := github.New(cfg.GitHubToken, db)
 	handler, err := watchhttp.New(watchhttp.Options{
 		Store:         db,
 		SessionSecret: string(secret),
@@ -64,7 +65,7 @@ func run() error {
 		SecureCookies: cfg.SecureCookies,
 		Logger:        slog.Default(),
 		Readiness:     readiness{db},
-		Syncer:        github.New(cfg.GitHubToken, db),
+		Syncer:        syncer,
 	})
 	if err != nil {
 		return err
@@ -78,6 +79,21 @@ func run() error {
 		WriteTimeout:      30 * time.Second,
 		IdleTimeout:       60 * time.Second,
 	}
+
+	go func() {
+		ticker := time.NewTicker(cfg.SyncInterval)
+		defer ticker.Stop()
+		for {
+			select {
+			case <-ticker.C:
+				if err := syncer.Sync(ctx); err != nil && !errors.Is(err, github.ErrAlreadyRunning) {
+					slog.Error("automatic sync failed", "error", err)
+				}
+			case <-ctx.Done():
+				return
+			}
+		}
+	}()
 
 	go func() {
 		<-ctx.Done()
