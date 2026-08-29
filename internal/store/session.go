@@ -40,6 +40,11 @@ func (s *Store) DeleteSession(ctx context.Context, hash []byte) error {
 	return err
 }
 
+func (s *Store) DeleteExpiredSessions(ctx context.Context) error {
+	_, err := s.db.ExecContext(ctx, `DELETE FROM sessions WHERE expires_at<=?`, util.Unix(s.now()))
+	return err
+}
+
 func (s *Store) SessionByTokenHash(ctx context.Context, hash []byte) (Session, error) {
 	var v Session
 	var expires, created, updated int64

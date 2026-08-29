@@ -81,6 +81,21 @@ func run() error {
 	}
 
 	go func() {
+		ticker := time.NewTicker(time.Hour)
+		defer ticker.Stop()
+		for {
+			select {
+			case <-ticker.C:
+				if err := db.DeleteExpiredSessions(ctx); err != nil {
+					slog.Error("session cleanup failed", "error", err)
+				}
+			case <-ctx.Done():
+				return
+			}
+		}
+	}()
+
+	go func() {
 		ticker := time.NewTicker(cfg.SyncInterval)
 		defer ticker.Stop()
 		for {
