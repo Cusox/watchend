@@ -1,57 +1,61 @@
 # watchend
 
-单用户自托管的 GitHub Stars 管理应用。
+一个极简单用户自托管 GitHub Stars 管理应用。
 
-## 功能
+watchend 会同步你的 GitHub Star 仓库，并以卡片形式集中展示。你可以搜索和排序仓库，编辑个人 Note、Categories 和 Tags，也可以随机打开一个感兴趣的仓库。
 
-- 单用户用户名/密码登陆支持
-- 同步管理用户的 Star 仓库，可按多种方式排序，支持升序/降序切换和分页加载；应用启动后会按配置间隔自动同步
-- 支持前往随机星标仓库
+## 特性
 
-## 配置
+- 用户名和密码登录
+- GitHub Star 仓库同步及后台自动同步
+- 仓库搜索、排序和分页加载
+- Note、Categories 和 Tags 管理
+- 随机仓库访问
+- SQLite 数据存储
+- Docker 镜像和 GHCR 发布支持
 
-应用通过环境变量配置：
+## 技术栈
 
-| 环境变量 | 必需 | 默认值 | 说明 |
-|---|---:|---|---|
-| `WATCHEND_DATABASE_PATH` | 否 | `/data/watchend.db` | SQLite 数据库路径 |
-| `WATCHEND_ADMIN_USERNAME` | 否 | `admin` | 首次启动时创建管理员 |
-| `WATCHEND_ADMIN_PASSWORD` | 是 | - | 首次启动时创建管理员密码；之后修改不会重置已有密码 |
-| `WATCHEND_ADDR` | 否 | `:3000` | HTTP 监听地址 |
-| `WATCHEND_SESSION_TTL` | 否 | `720h` | Session 有效期 |
-| `WATCHEND_SECURE_COOKIES` | 否 | `true` | HTTPS 环境保持 `true`；本地 HTTP 开发设置为 `false` |
-| `WATCHEND_GITHUB_TOKEN` | 是 | - | GitHub Personal Access Token |
-| `WATCHEND_SYNC_INTERVAL` | 否 | `6h` | 后台自动同步间隔；应用启动后首次等待该间隔再同步 |
+- Go
+- SQLite
+- Go templates
+- HTMX
+- Docker
 
-`WATCHEND_GITHUB_TOKEN` 用于调用 GitHub API，Token 应只授予同步所需的最小权限。
+## 快速开始
 
-首次启动时，应用会在数据库所在目录创建 `session-secret` 文件，并设置为仅所有者可读写（`0600`）。该文件会在重启时复用；删除它会使现有登录 Session 失效。
-
-## Docker
-
-构建镜像：
-
-```sh
-docker build -t watchend .
-```
-
-启动示例：
+使用 GHCR 镜像：
 
 ```sh
 docker run -d \
   --name watchend \
   -p 3000:3000 \
   -v ./watchend/data:/data \
-  -e WATCHEND_SECURE_COOKIES='false' \
-  -e WATCHEND_ADMIN_PASSWORD='replace-with-a-strong-password' \
+  -e WATCHEND_ADMIN_PASSWORD='your-password' \
   -e WATCHEND_GITHUB_TOKEN='your-github-token' \
-  watchend
+  -e WATCHEND_SECURE_COOKIES='false' \
+  ghcr.io/Cusox/watchend:latest
 ```
 
-打开 `http://localhost:3000`，默认管理员用户名为 `admin`。
+然后访问 `http://localhost:3000`。默认管理员用户名为 `admin`。
 
-生产环境应部署在 HTTPS reverse proxy 后，并保持：
+本地开发需要 Go 1.25 或更高版本：
 
 ```sh
-WATCHEND_SECURE_COOKIES=true
+WATCHEND_DATABASE_PATH=./watchend.db \
+WATCHEND_ADMIN_PASSWORD='your-password' \
+WATCHEND_GITHUB_TOKEN='your-github-token' \
+WATCHEND_SECURE_COOKIES=false \
+go run ./cmd/watchend
 ```
+
+## 配置
+
+主要配置项：
+
+- `WATCHEND_ADMIN_PASSWORD`：管理员密码
+- `WATCHEND_GITHUB_TOKEN`：GitHub API Token
+- `WATCHEND_DATABASE_PATH`：SQLite 数据库路径
+- `WATCHEND_ADDR`：监听地址，默认为 `:3000`
+- `WATCHEND_SYNC_INTERVAL`：后台同步间隔，默认为 `6h`
+- `WATCHEND_SECURE_COOKIES`：是否启用 Secure Cookie，HTTPS 环境应保持启用
