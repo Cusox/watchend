@@ -28,6 +28,7 @@ type Store interface {
 	ListRepositories(context.Context) ([]store.Repository, error)
 	RepositoryByID(context.Context, int64) (store.Repository, error)
 	RandomRepository(context.Context, string) (store.Repository, error)
+	DeleteRepositoriesExcept(context.Context, []int64) error
 	ListRepositoriesPage(context.Context, int, int, string, string) ([]store.Repository, bool, error)
 	ListRepositoriesPageSearch(context.Context, int, int, string, string, string) ([]store.Repository, bool, error)
 	UpdateRepositoryDetails(context.Context, int64, string, []string, []string) error

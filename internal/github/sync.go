@@ -65,12 +65,14 @@ func (s *Syncer) run(parent context.Context) error {
 	ctx, cancel := context.WithTimeout(parent, 10*time.Minute)
 	defer cancel()
 	var processed int
+	var repositoryIDs []int64
 	err := s.client.StarsEach(ctx, func(stars []Star, total int) error {
 		s.mu.Lock()
 		s.status.Total = total
 		s.mu.Unlock()
 		for _, star := range stars {
 			r := star.Repository
+			repositoryIDs = append(repositoryIDs, r.ID)
 			if err := s.db.UpsertRepository(ctx, store.Repository{ID: r.ID, Owner: r.Owner.Login, Name: r.Name, FullName: r.FullName, Description: r.Description, HTMLURL: r.HTMLURL, DefaultBranch: r.DefaultBranch, Stars: r.Stars, Archived: r.Archived, Topics: r.Topics, Language: r.Language, License: r.License.SPDXID, CreatedAt: r.CreatedAt, UpdatedAt: r.UpdatedAt, StarredAt: star.StarredAt}); err != nil {
 				return fmt.Errorf("save repository %s: %w", r.FullName, err)
 			}
@@ -84,6 +86,9 @@ func (s *Syncer) run(parent context.Context) error {
 		}
 		return nil
 	})
+	if err == nil {
+		err = s.db.DeleteRepositoriesExcept(ctx, repositoryIDs)
+	}
 	s.finish(err)
 	return err
 }

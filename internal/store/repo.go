@@ -27,6 +27,20 @@ func (s *Store) UpsertRepository(ctx context.Context, r Repository) error {
 	return err
 }
 
+func (s *Store) DeleteRepositoriesExcept(ctx context.Context, ids []int64) error {
+	if len(ids) == 0 {
+		_, err := s.db.ExecContext(ctx, `DELETE FROM repositories`)
+		return err
+	}
+	placeholders := strings.TrimRight(strings.Repeat("?,", len(ids)), ",")
+	args := make([]any, len(ids))
+	for i, id := range ids {
+		args[i] = id
+	}
+	_, err := s.db.ExecContext(ctx, `DELETE FROM repositories WHERE id NOT IN (`+placeholders+`)`, args...)
+	return err
+}
+
 func (s *Store) UpdateRepositoryDetails(ctx context.Context, id int64, note string, categories, tags []string) error {
 	if id <= 0 {
 		return requirePositive("repository ID", id)
