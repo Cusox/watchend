@@ -1,8 +1,10 @@
 # watchend
 
-一个极简单用户自托管 GitHub Stars 管理应用。
+一个极简的单用户自托管 GitHub Stars 管理应用。
 
 watchend 会同步你的 GitHub Star 仓库，并以卡片形式集中展示。你可以搜索和排序仓库，编辑个人 Note、Categories 和 Tags，也可以随机打开一个感兴趣的仓库。
+
+![watchend 界面](images/watchend.png)
 
 ## 特性
 
