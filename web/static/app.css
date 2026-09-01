@@ -387,7 +387,9 @@ header button:hover {
 
 .label-heading {
     flex: 0 0 4.8rem;
+    padding-top: .18rem;
     color: var(--muted);
+    line-height: 1.25;
 }
 
 .label-values {
