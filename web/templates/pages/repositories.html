@@ -26,7 +26,7 @@
         </div>
     </div>
     <div class="repository-search-row">
-        <form class="repository-search" method="get" action="/repositories" hx-get="/repositories/cards" hx-target="#repository-cards" hx-trigger="submit, keyup changed delay:300ms from:input" hx-swap="innerHTML">
+        <form class="repository-search" method="get" action="/repositories" hx-get="/repositories/cards" hx-target="#repository-cards" hx-trigger="submit, search, keyup changed delay:300ms from:input" hx-swap="innerHTML">
             <input type="search" name="q" value="{{.Search}}" placeholder="Search repositories" aria-label="Search repositories">
             <input type="hidden" name="sort" value="{{.Query}}">
             <input type="hidden" name="direction" value="{{.Direction}}">
